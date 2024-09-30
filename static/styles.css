@@ -1,0 +1,95 @@
+/* Set a dark background for the body */
+body {
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Center the content with some spacing */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 50px;
+    text-align: center;
+}
+
+/* Style the form */
+form {
+    background-color: #1e1e1e;
+    padding: 20px 40px; /* Increase padding on the right and left for more space */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: inline-block;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Flexbox layout for the form rows (Ticker/Exchange and Start/End Date) */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 30px; /* Increase gap between the left and right columns */
+}
+
+/* Ensure each input group takes up 48% of the available width */
+.form-group {
+    width: 48%;
+}
+
+/* Style form labels */
+form label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+/* Style form inputs */
+form input[type="text"],
+form input[type="date"] {
+    width: 100%;
+    padding: 10px 2px;  /* Adjusted padding for more space inside the input fields */
+    border-radius: 5px;
+    border: 1px solid #333;
+    background-color: #333;
+    color: #f0f0f0;
+    font-size: 16px;
+}
+
+/* Style the submit button */
+form input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Submit button hover effect */
+form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Style for the chart container */
+.chart-container {
+    margin-top: 50px;
+}
+
+/* Style the chart header */
+h2 {
+    color: #ffffff;
+    font-size: 28px;
+    margin-top: 30px;
+}
+
+/* Style the page title */
+h1 {
+    color: #ffffff;
+    font-size: 36px;
+    margin-bottom: 30px;
+}

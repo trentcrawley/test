@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Hot Copper{% endblock %}
+{% block heading %}Hot Copper{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="ticker">Enter Ticker:</label>
+                <input type="text" id="ticker" name="ticker" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+    {% if data %}
+        <h2>Results for {{ data[0]['ticker'] }}</h2>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Comments</th>
+                <th>Views</th>
+                <th>Date</th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.subject }}</td>
+                <td>{{ item.comments }}</td>
+                <td>{{ item.views }}</td>
+                <td>{{ item.start_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

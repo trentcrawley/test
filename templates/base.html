@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar for navigation -->
+        <div class="sidebar">
+            <a href="/register_turnover">Register Turnover</a>
+            <a href="/hot_copper">Hot Copper</a>
+        </div>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <h1>{% block heading %}{% endblock %}</h1>
+
+            <!-- The specific content of each page will be inserted here -->
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

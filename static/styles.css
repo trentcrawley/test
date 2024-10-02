@@ -1,56 +1,66 @@
-/* Set a dark background for the body */
 body {
-    background-color: #121212;
-    color: #f0f0f0;
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #121212;
+    color: #f0f0f0;
 }
 
-/* Center the content with some spacing */
 .container {
-    width: 80%;
-    margin: 0 auto;
-    padding-top: 50px;
-    text-align: center;
+    display: flex;
+    height: 100vh;
 }
 
-/* Style the form */
-form {
+.sidebar {
+    width: 200px;
     background-color: #1e1e1e;
-    padding: 20px 40px; /* Increase padding on the right and left for more space */
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    display: inline-block;
-    max-width: 600px;
+    padding-top: 20px;
+    position: fixed;
+    height: 100%;
+}
+
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: white;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.sidebar a:hover {
+    background-color: #575757;
+    color: white;
+}
+
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
     width: 100%;
 }
 
-/* Flexbox layout for the form rows (Ticker/Exchange and Start/End Date) */
+h1 {
+    color: white;
+    font-size: 36px;
+}
+
+/* Reduce space between columns */
 .form-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-    gap: 30px; /* Increase gap between the left and right columns */
+    gap: 10px; /* Reduce this value to bring the columns closer */
 }
 
-/* Ensure each input group takes up 48% of the available width */
+/* Ensure form group takes up less width */
 .form-group {
-    width: 48%;
+    width: 48%; /* You can reduce this to make the columns narrower */
 }
 
-/* Style form labels */
-form label {
-    display: block;
-    font-size: 18px;
-    margin-bottom: 8px;
-}
-
-/* Style form inputs */
-form input[type="text"],
-form input[type="date"] {
+/* Styling for form inputs */
+input[type="text"], input[type="date"], input[type="submit"] {
     width: 100%;
-    padding: 10px 2px;  /* Adjusted padding for more space inside the input fields */
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid #333;
     background-color: #333;
@@ -58,38 +68,15 @@ form input[type="date"] {
     font-size: 16px;
 }
 
-/* Style the submit button */
-form input[type="submit"] {
+/* Submit button styling */
+input[type="submit"] {
+    width: auto; /* Make the button size adjust to its content */
+    padding: 10px 20px;
+    border-radius: 5px;
     background-color: #007bff;
     color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-/* Submit button hover effect */
-form input[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-/* Style for the chart container */
-.chart-container {
-    margin-top: 50px;
-}
-
-/* Style the chart header */
-h2 {
-    color: #ffffff;
-    font-size: 28px;
-    margin-top: 30px;
-}
-
-/* Style the page title */
-h1 {
-    color: #ffffff;
-    font-size: 36px;
-    margin-bottom: 30px;
+    border: none;
+    margin-left: 20px;
 }

@@ -2,20 +2,41 @@ from flask import Blueprint, render_template, request
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import yfinance as yf
+import pandas as pd
 from datetime import datetime, timedelta
+import os
+
+# Import the Google Drive API class and the download function
+from modules.driveupload import GoogleDriveAPI, get_tracked_ticker_from_cloud
 
 # Define the Blueprint for Register Turnover
 register_turnover_bp = Blueprint('register_turnover', __name__)
 
+CSV_FILE_PATH = os.path.join(os.getcwd(), 'tracking.csv')
+file_downloaded = False
+@register_turnover_bp.before_app_request
+def download_tracking_file():
+    global file_downloaded
+    """Download the latest tracking.csv from Google Drive only once, on the first request."""
+    
+    # Check if the file has been downloaded
+    if not file_downloaded:
+        get_tracked_ticker_from_cloud(CSV_FILE_PATH)        
+        # Set the flag to True after the file has been downloaded
+        file_downloaded = True
+
 @register_turnover_bp.route("/", methods=["GET", "POST"])
 def register_turnover():
     today = datetime.today().strftime('%Y-%m-%d')
+    ticker, exchange, start_date, end_date = "", "", today, today
 
-    # Default form values for GET request
-    ticker = ""
-    exchange = ""
-    start_date = today
-    end_date = today
+    # Load tracking.csv
+    if os.path.exists(CSV_FILE_PATH):
+        tracking_data = pd.read_csv(CSV_FILE_PATH)
+        tracking_data = tracking_data[['ticker', 'tracked_since']].rename(columns={'tracked_since': 'eventdate'})
+        tracking_html = tracking_data.to_html(index=False, classes='table table-striped', border=0)
+    else:
+        tracking_html = "<p>No tracking data found.</p>"
 
     if request.method == "POST":
         ticker = request.form.get("ticker")
@@ -46,6 +67,7 @@ def register_turnover():
             typical_price = (history['High'] + history['Low'] + history['Close']) / 3
             vwap = (typical_price * history['Volume']).cumsum() / history['Volume'].cumsum()
             latest_register_turnover = register_turnover.iloc[-1] * 100 if register_turnover is not None else 0
+
             # Create subplots with secondary y-axis for Register Turnover
             fig = make_subplots(
                 rows=2, cols=1, shared_xaxes=True, row_heights=[0.7, 0.3], vertical_spacing=0.05,
@@ -87,9 +109,9 @@ def register_turnover():
             fig.update_yaxes(title_text="Register Turnover", secondary_y=True, row=1, col=1)
 
             plot_html = fig.to_html(full_html=False)
-            return render_template("index.html", plot_html=plot_html, today=today, ticker=ticker, exchange=exchange, start_date=start_date, end_date=end_date)
+            return render_template("index.html", plot_html=plot_html, today=today, ticker=ticker, exchange=exchange, start_date=start_date, end_date=end_date, tracking_html=tracking_html)
 
-    return render_template("index.html", today=today, ticker=ticker, exchange=exchange, start_date=start_date, end_date=end_date)
+    return render_template("index.html", today=today, ticker=ticker, exchange=exchange, start_date=start_date, end_date=end_date, tracking_html=tracking_html)
 
 if __name__ == "__main__":
     app.run(debug=True)

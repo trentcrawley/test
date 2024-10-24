@@ -4,7 +4,7 @@
 {% block heading %}Register Turnover{% endblock %}
 
 {% block content %}
-    <form method="POST">
+    <form method="POST" class="grid-form">
         <div class="form-row">
             <div class="form-group">
                 <label for="ticker">Ticker</label>
@@ -30,6 +30,38 @@
         </div>
     </form>
 
-    <!-- Plotly chart placeholder -->
-    <div>{{ plot_html | safe }}</div>
+    
+    <div class="plot-container">
+        {{ plot_html | safe }}
+    </div>
+
+    <h2>ASX</h2>
+
+    <div class="table-container">
+        {{ tracking_html | safe }}
+    </div>
+
+   
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get table rows
+    const rows = document.querySelectorAll('table.table-striped tbody tr');
+    
+    rows.forEach(row => {
+        row.addEventListener('dblclick', function() {
+            const ticker = row.cells[0].innerText;
+            const eventdate = row.cells[1].innerText;
+
+            // Set the form values
+            document.getElementById('ticker').value = ticker;
+            document.getElementById('start_date').value = eventdate;
+            document.getElementById('end_date').value = new Date().toISOString().split('T')[0]; // Today's date
+        });
+    });
+});
+</script>
 {% endblock %}

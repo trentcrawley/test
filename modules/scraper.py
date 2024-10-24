@@ -18,7 +18,7 @@ def get_data_all(ticker):
     print(f'Scraping {url}')
     
     try:
-        response = requests.get(url, headers=headers)#, proxies=proxies)
+        response = requests.get(url, headers=headers, proxies=proxies)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error fetching data: {e}")
@@ -70,3 +70,5 @@ def get_data_all(ticker):
 
 
 
+x = get_data_all('anz')
+print(x)

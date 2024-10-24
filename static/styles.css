@@ -44,23 +44,21 @@ h1 {
     font-size: 36px;
 }
 
-/* Reduce space between columns */
-.form-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 10px; /* Reduce this value to bring the columns closer */
+.grid-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
-/* Ensure form group takes up less width */
 .form-group {
-    width: 48%; /* You can reduce this to make the columns narrower */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
-/* Styling for form inputs */
 input[type="text"], input[type="date"], input[type="submit"] {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     border-radius: 5px;
     border: 1px solid #333;
     background-color: #333;
@@ -68,15 +66,54 @@ input[type="text"], input[type="date"], input[type="submit"] {
     font-size: 16px;
 }
 
-/* Submit button styling */
 input[type="submit"] {
-    width: auto; /* Make the button size adjust to its content */
+    width: auto;
     padding: 10px 20px;
-    border-radius: 5px;
     background-color: #007bff;
     color: white;
-    font-size: 16px;
     cursor: pointer;
     border: none;
-    margin-left: 20px;
+}
+
+.table-container {
+    margin-top: 40px;
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #333;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
+}
+
+td {
+    background-color: #1e1e1e;
+}
+
+.plot-container {
+    margin-top: 40px;
+}
+
+h2 {
+    color: #f0f0f0; /* Light text color */
+    margin-top: 20px; /* Add some space before the heading */
+    margin-bottom: 10px; /* Add some space after the heading */
+    font-size: 24px; /* Adjust the font size if necessary */
+    text-align: left; /* Align the heading to the left */
 }

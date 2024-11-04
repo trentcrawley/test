@@ -3,3 +3,7 @@ credentials.json
 token.pickle
 __pycache__/
 *.pyc
+hot_copper.py
+local_token.pickle
+soi.csv
+tracking.csv

@@ -11,16 +11,46 @@ import io
 class GoogleDriveAPI:
     SCOPES = ['https://www.googleapis.com/auth/drive']
 
-    def __init__(self):
-        #self.token_path = r'C:\Users\trent\VSCode\registerturn\token.pickle'
-        self.token_path = os.path.join(os.getcwd(), 'token.pickle')
-        self.creds = self.authenticate()
-        self.service = build('drive', 'v3', credentials=self.creds)
-        self.secret_file = os.path.join(os.getcwd(), 'credentials.json')
+    # def __init__(self):
+    #     #self.token_path = r'C:\Users\trent\VSCode\registerturn\token.pickle'
+    #     self.token_path = os.path.join(os.getcwd(), 'token.pickle')
+    #     self.creds = self.authenticate()
+    #     self.service = build('drive', 'v3', credentials=self.creds)
+    #     self.secret_file = os.path.join(os.getcwd(), 'credentials.json')
 
-    def authenticate(self):
+    # def authenticate(self):
+    #     creds = None
+    #     if os.path.exists(self.token_path):
+    #         with open(self.token_path, 'rb') as token:
+    #             creds = pickle.load(token)
+
+    #     if not creds or not creds.valid:
+    #         if creds and creds.expired and creds.refresh_token:
+    #             creds.refresh(Request())
+    #         else:
+    #             flow = InstalledAppFlow.from_client_secrets_file(self.secret_file, self.SCOPES)
+    #             creds = flow.run_local_server(port=0)
+    #         with open(self.token_path, 'wb') as token:
+    #             pickle.dump(creds, token)
+
+    #     return creds
+    def __init__(self, force_new_token=False):
+        # Set the path to `credentials.json` in the `testflaskapp` directory
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Goes up one level from `modules`
+        self.secret_file = os.path.join(base_dir, 'credentials.json')
+
+        # Define separate token paths for different environments
+        if os.environ.get("PYTHONANYWHERE_DOMAIN"):
+            self.token_path = os.path.join(base_dir, 'server_token.pickle')
+        else:
+            self.token_path = os.path.join(base_dir, 'local_token.pickle')
+
+        self.creds = self.authenticate(force_new_token=force_new_token)
+        self.service = build('drive', 'v3', credentials=self.creds)
+
+    def authenticate(self, force_new_token=False):
         creds = None
-        if os.path.exists(self.token_path):
+        if not force_new_token and os.path.exists(self.token_path):
             with open(self.token_path, 'rb') as token:
                 creds = pickle.load(token)
 
@@ -34,7 +64,7 @@ class GoogleDriveAPI:
                 pickle.dump(creds, token)
 
         return creds
-
+     
     def find_file(self, file_name):
         try:
             query = f"name='{file_name}' and trashed=false"
@@ -122,12 +152,12 @@ class GoogleDriveAPI:
         return destination_path
 
 # Add this function:
-def get_tracked_ticker_from_cloud(csv_file):
+def get_tracked_ticker_from_cloud(csv_file,file_name):
     """Export the Google Sheets file as CSV and download it to the local system."""
     
     drive = GoogleDriveAPI()
     # Find the Google Sheets file on Drive by its name 'tracking' (not 'tracking.csv')
-    file_id, mime_type = drive.find_file('tracking')  # Search for 'tracking' here
+    file_id, mime_type = drive.find_file(file_name)  # Search for 'tracking' here
 
     if file_id and mime_type == 'application/vnd.google-apps.spreadsheet':
         # If the file is a Google Sheets file, export it as a CSV
@@ -135,3 +165,4 @@ def get_tracked_ticker_from_cloud(csv_file):
     else:
         print("File is not a Google Sheets document or not found.")
 
+#drive_api = GoogleDriveAPI()

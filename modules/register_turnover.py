@@ -13,6 +13,8 @@ from modules.driveupload import GoogleDriveAPI, get_tracked_ticker_from_cloud
 register_turnover_bp = Blueprint('register_turnover', __name__)
 
 CSV_FILE_PATH = os.path.join(os.getcwd(), 'tracking.csv')
+CSV_FILE_PATH_SOI = os.path.join(os.getcwd(), 'soi.csv')
+
 file_downloaded = False
 @register_turnover_bp.before_app_request
 def download_tracking_file():
@@ -21,7 +23,8 @@ def download_tracking_file():
     
     # Check if the file has been downloaded
     if not file_downloaded:
-        get_tracked_ticker_from_cloud(CSV_FILE_PATH)        
+        get_tracked_ticker_from_cloud(CSV_FILE_PATH,"tracking")
+        get_tracked_ticker_from_cloud(CSV_FILE_PATH_SOI,"soi")        
         # Set the flag to True after the file has been downloaded
         file_downloaded = True
 
@@ -29,6 +32,8 @@ def download_tracking_file():
 def register_turnover():
     today = datetime.today().strftime('%Y-%m-%d')
     ticker, exchange, start_date, end_date = "", "", today, today
+    get_tracked_ticker_from_cloud(CSV_FILE_PATH,"tracking")
+    get_tracked_ticker_from_cloud(CSV_FILE_PATH_SOI,"soi")      
 
     # Load tracking.csv
     if os.path.exists(CSV_FILE_PATH):
@@ -37,6 +42,12 @@ def register_turnover():
         tracking_html = tracking_data.to_html(index=False, classes='table table-striped', border=0)
     else:
         tracking_html = "<p>No tracking data found.</p>"
+
+    # Load soi.csv
+    if os.path.exists(CSV_FILE_PATH_SOI):
+        soi_data = pd.read_csv(CSV_FILE_PATH_SOI, parse_dates=['date'])
+        #delete duplicates of ticker,date
+        soi_data = soi_data.drop_duplicates(subset=['ticker','date'])
 
     if request.method == "POST":
         ticker = request.form.get("ticker")
@@ -52,16 +63,30 @@ def register_turnover():
         history = stock_data.history(start=start_date, end=end_date)
 
         if not history.empty:
-            # Format the index as strings (YYYY-MM-DD)
-            history.index = history.index.strftime('%Y-%m-%d')
 
-            # Get shares outstanding
-            shares_outstanding = stock_data.info.get('sharesOutstanding', 'N/A')
-            register_turnover = None
+            # check if the ticker is in the soi.csv
+            if ticker in soi_data['ticker'].unique():
+                
+                soi_data_filtered = soi_data[soi_data['ticker'] == ticker]
+                soi_data_filtered['date'] = soi_data_filtered['date'].dt.tz_localize(None)
+                history.index = history.index.tz_localize(None)
+                
+                # Now merge the DataFrames
+                merged_df = history.reset_index().merge(soi_data_filtered[['date', 'soi']], left_on='Date', right_on='date', how='left')
+                # Forward fill missing values in 'soi'
+                merged_df['soi'] = merged_df['soi'].ffill()
+                # Backward fill any remaining missing values in 'soi'
+                merged_df['soi'] = merged_df['soi'].bfill()
+                register_turnover = (merged_df['Volume'] / merged_df['soi']).cumsum()
 
-            if shares_outstanding != 'N/A':
-                # Calculate register turnover
-                register_turnover = (history['Volume'] / shares_outstanding).cumsum()
+            else:
+                # Get shares outstanding
+                shares_outstanding = stock_data.info.get('sharesOutstanding', 'N/A')
+                register_turnover = None
+
+                if shares_outstanding != 'N/A':
+                    # Calculate register turnover
+                    register_turnover = (history['Volume'] / shares_outstanding).cumsum()
 
             # VWAP calculation
             typical_price = (history['High'] + history['Low'] + history['Close']) / 3
